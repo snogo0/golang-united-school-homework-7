@@ -75,6 +75,7 @@ func TestLess(t *testing.T) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func TestMatrix(t *testing.T) {
+	t.Parallel()
 	testCases := map[string]struct {
 		input    string
 		output   string
@@ -88,8 +89,10 @@ func TestMatrix(t *testing.T) {
 		"not numbers":            {input: "1 2\n3 E", output: "<nil>", expErr: &strconv.NumError{Func: "Atoi", Num: "E", Err: strconv.ErrSyntax}, numError: true},
 	}
 
-	for name, tt := range testCases {
+	for name, tcase := range testCases {
+		tt := tcase
 		t.Run(name, func(t *testing.T) {
+			t.Parallel()
 			output, err := New(tt.input)
 			fmt.Printf("Got: %v %+v\n", output, err)
 			fmt.Printf("Exp: %v %+v\n", tt.output, tt.expErr)
