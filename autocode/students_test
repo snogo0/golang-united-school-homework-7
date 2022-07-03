@@ -2,6 +2,10 @@ package coverage
 
 import (
 	"os"
+	"fmt"
+	"time"
+	"testing"
+	"sort"
 )
 
 // DO NOT EDIT THIS FUNCTION
@@ -18,3 +22,52 @@ func init() {
 
 // WRITE YOUR CODE BELOW
 
+func TestLen(t *testing.T) {
+	pp := make(People, 0)
+	p1 := Person{firstName: "Mak", lastName: "Sim", birthDay: time.Now()}
+	p2 := Person{firstName: "Dan", lastName: "Il", birthDay: time.Now()}
+	size := 0
+	pp = append(pp, p1); size += 1
+	pp = append(pp, p2); size += 1
+	fmt.Println(pp)
+	if pp.Len() != size {
+		t.Errorf("Length error - got: %d, expected: %d", pp.Len(), size)
+	}
+}
+
+func TestSwap(t *testing.T) {
+
+	pp := make(People, 0)
+	p1 := Person{firstName: "Mak", lastName: "Sim", birthDay: time.Now()}
+	p2 := Person{firstName: "Dan", lastName: "Il", birthDay: time.Now()}
+	pp = append(pp, p1)
+	pp = append(pp, p2)
+	fmt.Println(pp)
+	pp.Swap(0, 1)
+	fmt.Println(pp)
+	if pp[0] != p1 || pp[1] != p1 {
+		t.Errorf("Not swapped\n      got: %v, %v\n expected: %v, %v", pp[0], pp[1], p2, p1)
+	}
+}
+
+func TestLess(t *testing.T) {
+	pp := make(People, 0)
+	bd := time.Now()
+	p1 := Person{firstName: "Mak", lastName: "Sim", birthDay: bd}
+	p2 := Person{firstName: "Dan", lastName: "Il", birthDay: bd}
+	p3 := Person{firstName: "Dan", lastName: "Ik", birthDay: bd}
+	p4 := Person{firstName: "Dan", lastName: "Il", birthDay: bd.Add(time.Hour)}
+	size := 0
+	pp = append(pp, p1); size += 1
+	pp = append(pp, p2); size += 1
+	pp = append(pp, p3); size += 1
+	pp = append(pp, p4); size += 1
+	fmt.Println(pp)
+	sort.Sort(People(pp))
+	fmt.Println(pp)
+	if pp.Len() != size {
+		t.Errorf("Length error\n      got: %d\n expected: %d", pp.Len(), size)
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
