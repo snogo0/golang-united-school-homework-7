@@ -6,6 +6,7 @@ import (
 	"time"
 	"testing"
 	"sort"
+	"strconv"
 )
 
 // DO NOT EDIT THIS FUNCTION
@@ -71,3 +72,28 @@ func TestLess(t *testing.T) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func TestMatrix(t *testing.T) {
+
+	m, err := New(`1 2
+	               3 4`)
+	fmt.Println(m)
+	if err != nil {
+		t.Errorf("Matrix not created properly:\n      got: %v\n expected: %v", err, nil)
+	}
+	m, err = New(`1 2 3
+	              3 4`)
+	fmt.Println(m)
+	if err == nil {
+		t.Errorf("Shit happens:\n      got: %v\n expected: %v", err, "Rows need to be the same length")
+	}
+	m, err = New(`1 a
+	              3 4`)
+	fmt.Println(m)
+	expectedErr := &strconv.NumError{Func: "Atoi", Num: "a", Err: strconv.ErrSyntax}
+	if err == nil {
+		t.Errorf("Shit happens:\n      got: %v\n expected: %v", err, expectedErr)
+	} else if *err.(*strconv.NumError) != *expectedErr {
+		t.Errorf("Shit happens:\n      got: %v\n expected: %v", err, expectedErr)
+	}
+}
