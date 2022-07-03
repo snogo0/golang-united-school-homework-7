@@ -7,6 +7,7 @@ import (
 	"testing"
 	"sort"
 	"strconv"
+	"errors"
 )
 
 // DO NOT EDIT THIS FUNCTION
@@ -74,26 +75,39 @@ func TestLess(t *testing.T) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func TestMatrix(t *testing.T) {
+	testCases := map[string]struct {
+		input    string
+		output   string
+		expErr   error
+		numError bool
+	}{
+		"valid matrix 2x2":       {input: "1 2\n3 4", output: "&{2 2 [1 2 3 4]}", expErr: nil},
+		"valid matrix 3x2":       {input: "1 2\n3 4\n5 6", output: "&{3 2 [1 2 3 4 5 6]}", expErr: nil},
+		"valid matrix 2x3":       {input: "1 2 3\n4 5 6", output: "&{2 3 [1 2 3 4 5 6]}", expErr: nil},
+		"different column sizes": {input: "1 2 3\n4 5", output: "<nil>", expErr: fmt.Errorf("Rows need to be the same length")},
+		"not numbers":            {input: "1 2\n3 E", output: "<nil>", expErr: &strconv.NumError{Func: "Atoi", Num: "E", Err: strconv.ErrSyntax}, numError: true},
+	}
 
-	m, err := New(`1 2
-	               3 4`)
-	fmt.Println(m)
-	if err != nil {
-		t.Errorf("Matrix not created properly:\n      got: %v\n expected: %v", err, nil)
-	}
-	m, err = New(`1 2 3
-	              3 4`)
-	fmt.Println(m)
-	if err == nil {
-		t.Errorf("Shit happens:\n      got: %v\n expected: %v", err, "Rows need to be the same length")
-	}
-	m, err = New(`1 a
-	              3 4`)
-	fmt.Println(m)
-	expectedErr := &strconv.NumError{Func: "Atoi", Num: "a", Err: strconv.ErrSyntax}
-	if err == nil {
-		t.Errorf("Shit happens:\n      got: %v\n expected: %v", err, expectedErr)
-	} else if *err.(*strconv.NumError) != *expectedErr {
-		t.Errorf("Shit happens:\n      got: %v\n expected: %v", err, expectedErr)
+	for name, tt := range testCases {
+		t.Run(name, func(t *testing.T) {
+			output, err := New(tt.input)
+			fmt.Printf("Got: %v %+v\n", output, err)
+			fmt.Printf("Exp: %v %+v\n", tt.output, tt.expErr)
+			if tt.expErr != nil {
+				if tt.numError {
+					if !errors.As(err, &tt.expErr) {
+						t.Errorf("%s:\n wrong error type is used in the return:\n      got: %T\n expected: %T", name, err, tt.expErr)
+					}
+				}
+			} else {
+				if err != nil {
+					t.Errorf("Error should be <nil>:\n      got: %s", err)
+				}
+			}
+
+			if fmt.Sprintf("%v", output) != tt.output {
+				t.Errorf("Matrix wasn't created properly:\nOutput:\n      got: %v\n expected: %v\nError:\n      got: %v\n expected: %v", output, tt.output, err, nil)
+			}
+		})
 	}
 }
