@@ -45,7 +45,7 @@ func TestSwap(t *testing.T) {
 	fmt.Println(pp)
 	pp.Swap(0, 1)
 	fmt.Println(pp)
-	if pp[0] != p1 || pp[1] != p1 {
+	if pp[0] != p2 || pp[1] != p1 {
 		t.Errorf("Not swapped\n      got: %v, %v\n expected: %v, %v", pp[0], pp[1], p2, p1)
 	}
 }
